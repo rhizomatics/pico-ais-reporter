@@ -1,0 +1,27 @@
+# ais-reporter configuration
+# Copy to /etc/ais-reporter.conf and edit.
+
+# Your vessel's real, licensed MMSI (9 digits). Required.
+MMSI=235000000
+
+# Navigational status to report: 15 = not defined (default, safest when
+# unattended), 8 = under way sailing, 0 = under way using engine, 1 = at
+# anchor, 5 = moored.
+NAV_STATUS=15
+
+# Space-separated list of "host:port" UDP targets, one per aggregator.
+# Get these from each service's station/feeder dashboard:
+#   MarineTraffic: https://www.marinetraffic.com/en/ais-fleets/add_ais_stream
+#   VesselFinder:  https://www.vesselfinder.com/set-up-station
+#   AISHub:        https://www.aishub.net/register (they relay to MT/VF/others too)
+TARGETS="mt-feed.example.com:12345 vf-feed.example.com:23456 data.aishub.net:5321"
+
+# --- Suppression ---
+# If set, ais-reporter checks this host before doing anything else, and
+# stays silent if it's reachable (e.g. the SignalK server or an NMEA
+# Ethernet bridge is up, meaning the boat's own AIS is presumably live).
+# Leave SUPPRESS_CHECK_HOST empty to always report.
+SUPPRESS_CHECK_HOST=
+# Optional: check a specific TCP port instead of ICMP ping (some routers/
+# firewalls drop ping but will still answer on a known service port).
+SUPPRESS_CHECK_PORT=
