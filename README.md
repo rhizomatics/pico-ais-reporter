@@ -37,34 +37,22 @@ There may be no space on the router to install Python, so this is plain POSIX `a
    so, it's assumed that device is already the vessel's live AIS source, and
    this script stays silent for that run.
 
-## Prerequisites on the router
-
-### Teltonika RutOS / OpenWRT
-
-```sh
-opkg update
-opkg install socat
-```
-
-`gpsctl` and `awk` (BusyBox) are already part of stock RutOS firmware.
-
 ## Install
 
-Optionally create a new user to own this script, from the *System* / *Administration* / *User Settings* menu.
+> [!NOTE]
+> These instructions assume an OpenWrt-based Teltonika RutOS router. `gpsctl` and `awk` (BusyBox) are already part of stock RutOS firmware.
 
-Copy the two runtime files to the router (paths below assume the scripts will
-be owned by the `ais` user, at `/usr/local/home/user/`, which is on the writable
-overlay with space to spare):
+Use `tools/install-remote.sh` to install or upgrade. The default account is `root` on host at `192.168.1.1`. Use the `REMOTE` environment variable to change that.
 
-```sh
-scp src/sh/ais-reporter.sh ais@<router>:/usr/local/home/user/
-```
-```sh
-scp src/awk/ais-reporter.awk ais@<router>:/usr/local/home/user/
+```bash
+REMOTE=root@192.168.100.10 tools/install-remote.sh
 ```
 
-Copy `config/ais-reporter.conf.example` to `/etc/ais-reporter.conf` (or symlink
-`/etc/ais-reporter.conf` to a copy kept alongside the scripts) and fill in:
+It installs `socat` if it's missing, and puts the scripts in `/usr/local/bin`, which is on the writable overlay.
+
+On a first install it copies the example config to `/etc/ais-reporter.conf`. Edit that, then run the script again to check the config, add the cron job and send a first report. Nothing is sent until the config has an `MMSI`, and an existing config is never overwritten.
+
+Fill in these settings in `/etc/ais-reporter.conf`:
 
 - `MMSI` - your vessel's real, licensed MMSI.
 - `NAV_STATUS` - defaults to 15 (not defined)
@@ -78,37 +66,40 @@ Copy `config/ais-reporter.conf.example` to `/etc/ais-reporter.conf` (or symlink
   the network.
   - Port number can be any port on the server that will be up when its actively sending AIS - this could be SignalK web app port, NMEA0183 on 10110 etc.
 
-### Teltonika RutOS / OpenWRT
+### Firmware upgrades
 
-Add these lines to `/etc/sysupgrade.conf` to ensure it's not wiped during a firmware upgrade.
+A RutOS upgrade removes `ais-reporter`, including its config, unless its files are listed in `/etc/sysupgrade.conf`. `tools/install-remote.sh` adds them, along with `/etc/crontabs/root`, and warns if `sysupgrade -l` doesn't list them.
 
-```
-  /etc/ais-reporter.sh
-  /usr/local/home/user/ais-reporter.sh
-  /usr/local/home/user/ais-reporter.awk
-```
-
+- Upgrade with "keep settings" on, and keep your own copy of `/etc/ais-reporter.conf`.
+- `socat` is a package, not one of those files. Turn on [Package Restore](https://wiki.teltonika-networks.com/view/RUT956_Package_Manager) in the Package Manager before upgrading, but it's not documented whether that covers packages installed with `opkg` on the command line.
+- Run `tools/install-remote.sh` after every upgrade. It reinstalls `socat` if needed, and is safe to repeat.
 
 ## Run manually
 
 ```sh
-/usr/local/home/user/ais-reporter.sh
+/usr/local/bin/ais-reporter.sh
 ```
 
 Logs one line to stderr per run (fix status, sentence sent, target count).
 Exits 0 in all "nothing to do" cases (no fix yet, suppressed) so it never
-spams cron's error mail.
+spams cron's error mail. A missing `socat` exits non-zero.
+
+To see what's installed, or check the config and dependencies without sending anything:
+
+```sh
+/usr/local/bin/ais-reporter.sh version
+/usr/local/bin/ais-reporter.sh check-config
+```
 
 ## Cron
 
+`tools/install-remote.sh` adds this to `/etc/crontabs/root`:
+
 ```
-*/15 * * * * /usr/local/home/user/ais-reporter.sh >> /var/log/ais-reporter.log 2>&1
+*/15 * * * * /usr/local/bin/ais-reporter.sh >> /var/log/ais-reporter.log 2>&1
 ```
 
-Add via `/etc/crontabs/root` (busybox `crond` picks up changes without a
-restart). `/var/log` is tmpfs on this device, so the log doesn't wear flash
-and is cleared on reboot. Adjust the `*/15` for a different reporting
-period.
+`/var/log` is tmpfs on this device, so the log doesn't wear flash and is cleared on reboot. To change the reporting period, edit the `*/15` and run `/etc/init.d/cron restart`. The script keeps an existing line's schedule, and repoints it if the scripts used to live somewhere else.
 
 
 ## Future Developments

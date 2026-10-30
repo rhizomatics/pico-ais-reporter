@@ -1,8 +1,9 @@
 # ais-reporter configuration
 # Copy to /etc/ais-reporter.conf and edit.
 
-# Your vessel's real, licensed MMSI (9 digits). Required.
-MMSI=235000000
+# Your vessel's real, licensed MMSI (9 digits), e.g. 235000000. Required:
+# nothing is sent until this is set.
+MMSI=
 
 # Navigational status to report: 15 = not defined (default, safest when
 # unattended), 8 = under way sailing, 0 = under way using engine, 1 = at

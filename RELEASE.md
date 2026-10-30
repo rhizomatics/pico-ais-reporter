@@ -1,0 +1,3 @@
+- commit
+- git tag v0.1.0.
+- Run tools/install-remote.sh.
