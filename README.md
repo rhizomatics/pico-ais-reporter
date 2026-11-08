@@ -2,13 +2,13 @@
 
 ## What it Does
 
-This was designed for a boat that used plugins on a SignalK server to report AIS data, and post its own position. 
+This was designed for a boat that used plugins on a SignalK server to report AIS data, and post its own position.
 
-Without self-reporting, short station reporting would often leave large gaps between position updates, so the boat could be hours out of date on popular apps. If the SignalK server failed, or was shut down to conserve the house batteries when sailing, the AIS wouldn't get reported. 
+Without self-reporting, short station reporting would often leave large gaps between position updates, so the boat could be hours out of date on popular apps. If the SignalK server failed, or was shut down to conserve the house batteries when sailing, the AIS wouldn't get reported.
 
-The pico reporter self-reports to popular AIS aggregators using tiny scripts that can easily run on the boat's router, for example a popular Teltonika cellular modem/router, and by using the router's own GPS it can do so without running any of the boat's NMEA infrastructure, for a minimal power footprint. 
+The pico reporter self-reports to popular AIS aggregators using tiny scripts that can easily run on the boat's router, for example a popular Teltonika cellular modem/router, and by using the router's own GPS it can do so without running any of the boat's NMEA infrastructure, for a minimal power footprint.
 
-Aside from friends and family tracking where you are, this also enables AIS based anchor watches, including for other boats using AIS data to track neighbouring boats swinging or dragging. 
+Aside from friends and family tracking where you are, this also enables AIS based anchor watches, including for other boats using AIS data to track neighbouring boats swinging or dragging.
 
 ## How it Works
 
@@ -104,11 +104,11 @@ To see what's installed, or check the config and dependencies without sending an
 
 ## Future Developments
 
-Paths were chosen to make packaging straightforward later: 
+Paths were chosen to make packaging straightforward later:
 
 - runtime scripts under `/usr/sbin` or a dedicated dir
 - config under `/etc`,
 - an init.d wrapper if a periodic daemon mode is ever wanted instead of cron
-- `socat` as a declared `Depends:` in the control file. 
+- `socat` as a declared `Depends:` in the control file.
 
 RutOS has announced change to a Yocto based build, so some of these options may change in future.
