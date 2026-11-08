@@ -28,10 +28,11 @@ if [ "${1:-}" = version ]; then
     exit 0
 fi
 
-SCRIPT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+SCRIPT_DIR=$(CDPATH='' cd -- "$(dirname -- "$0")" && pwd)
 AWK_SCRIPT="$SCRIPT_DIR/ais-reporter.awk"
 
 CONFIG="${AIS_REPORTER_CONF:-/etc/ais-reporter.conf}"
+# shellcheck source=/dev/null
 [ -f "$CONFIG" ] && . "$CONFIG"
 
 : "${MMSI:?MMSI must be set (see $CONFIG)}"
