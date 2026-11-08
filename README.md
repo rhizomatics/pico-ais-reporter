@@ -1,5 +1,7 @@
 # pico-ais-reporter
 
+[![boat tech directory](https://boat-tech-directory.rhizomatics.org.uk/images/badge.svg)](https://boat-tech-directory.rhizomatics.org.uk) [![managed by hq](https://raw.githubusercontent.com/rhizomatics/hq/main/assets/badge-managed-by-hq.svg)](https://github.com/rhizomatics/hq)
+
 ## What it Does
 
 This was designed for a boat that used plugins on a SignalK server to report AIS data, and post its own position.
